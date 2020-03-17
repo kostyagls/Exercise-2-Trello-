@@ -6,12 +6,7 @@ private class TestListController {
     @IsTest
     static void testGetCardsByList() {
 
-        Board__c board = new Board__c(Name = 'testBoard');
-        insert board;
-        List<Board__c> boards = [SELECT Id FROM Board__c];
-
-        List__c cList = new List__c(Name = 'testList', Board__c = boards[0].Id);
-        insert cList;
+        TestDataFactory.insertBoardAndListTestData();
         List<List__c> lists = [SELECT Id FROM List__c];
 
         Card__c card = new Card__c(Name = 'testCard', List__c = lists[0].Id);
@@ -25,12 +20,7 @@ private class TestListController {
     @IsTest
     static void testCreateNewCard() {
 
-        Board__c board = new Board__c(Name = 'testBoard');
-        insert board;
-        List<Board__c> boards = [SELECT Id FROM Board__c];
-
-        List__c cList = new List__c(Name = 'testList', Board__c = boards[0].Id);
-        insert cList;
+        TestDataFactory.insertBoardAndListTestData();
         List<List__c> lists = [SELECT Id FROM List__c];
 
         Boolean isException = false;
@@ -47,12 +37,7 @@ private class TestListController {
     @IsTest
     static void testCreateNewCardException() {
 
-        Board__c board = new Board__c(Name = 'testBoard');
-        insert board;
-        List<Board__c> boards = [SELECT Id FROM Board__c];
-
-        List__c cList = new List__c(Name = 'testList', Board__c = boards[0].Id);
-        insert cList;
+        TestDataFactory.insertBoardAndListTestData();
         List<List__c> lists = [SELECT Id FROM List__c];
         delete lists;
 
@@ -71,12 +56,7 @@ private class TestListController {
     @IsTest
     static void testChangeListName() {
 
-        Board__c board = new Board__c(Name = 'testBoard');
-        insert board;
-        List<Board__c> boards = [SELECT Id FROM Board__c];
-
-        List__c cList = new List__c(Name = 'testList', Board__c = boards[0].Id);
-        insert cList;
+        TestDataFactory.insertBoardAndListTestData();
         List<List__c> lists = [SELECT Id FROM List__c];
 
         Boolean isException = false;
@@ -93,12 +73,7 @@ private class TestListController {
     @IsTest
     static void testChangeListNameException() {
 
-        Board__c board = new Board__c(Name = 'testBoard');
-        insert board;
-        List<Board__c> boards = [SELECT Id FROM Board__c];
-
-        List__c cList = new List__c(Name = 'testList', Board__c = boards[0].Id);
-        insert cList;
+        TestDataFactory.insertBoardAndListTestData();
         List<List__c> lists = [SELECT Id FROM List__c];
         delete lists;
 
