@@ -1,0 +1,96 @@
+<template>
+
+    <div class="card-back " draggable="true" ondragstart={cardDragStart}>
+        <button class="slds-button slds-coordinates__item-action slds-button_reset slds-media"
+                onclick={handleClickCard}>
+            {card.Name}
+        </button>
+    </div>
+
+    <template if:true={isModalOpen}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
+                 aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <lightning-button-icon icon-name="utility:close"
+                                           alternative-text="Close"
+                                           variant="bare-inverse"
+                                           class="slds-modal__close"
+                                           onclick={handleClickCloseModel}>
+                    </lightning-button-icon>
+                    <h2 id="modal-heading-01" class="slds-modal__title slds-hyphenate">{card.Name}</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
+                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+                        <div class="slds-p-bottom_large slds-p-left_large" style="width:500px">
+                            <lightning-record-edit-form
+                                    id="recordViewForm"
+                                    record-id={card.Id}
+                                    object-api-name="Card__c"
+                                    onsuccess={successUpdateRecord}>
+                                <lightning-messages></lightning-messages>
+                                <lightning-input-field field-name="Name" required></lightning-input-field>
+                                <lightning-input-field field-name="Description__c"></lightning-input-field>
+                                <lightning-input-field field-name='List__c'></lightning-input-field>
+                                <lightning-input-field field-name='Due_Date__c'></lightning-input-field>
+
+                                <p>Members: </p>
+                                <div class="slds-grid slds-gutters slds-m-top_small">
+                                    <template if:true={cardMembers}>
+                                        <template for:each={cardMembers} for:item="cardMember">
+                                            <div key={cardMember.Id} class="slds-col slds-size_1-of-3">
+                                                <div class="slds-box slds-box_x-small" style="width: fit-content;">
+                                                    {cardMember.UserName}
+                                                    <lightning-button-icon icon-name="utility:delete"
+                                                                           alternative-text="Delete"
+                                                                           class="slds-m-left_small "
+                                                                           title="Delete"
+                                                                           value={cardMember}
+                                                                           onclick={handleClickDeleteMember}>
+                                                    </lightning-button-icon>
+                                                </div>
+                                            </div>
+                                        </template>
+                                    </template>
+                                    <lightning-button-menu alternative-text="Show menu"
+                                                           tooltip="Add member"
+                                                           menu-alignment="left"
+                                                           icon-name="utility:add"
+                                                           class=" slds-m-top_small slds-m-left_small">
+                                        <template if:true={boardMembers}>
+                                            <template for:each={boardMembers} for:item="boardMember">
+                                                <lightning-menu-item key={boardMember.Id}
+                                                                     label={boardMember.UserName}
+                                                                     value={boardMember}
+                                                                     onclick={handleClickAddMember}>
+                                                </lightning-menu-item>
+                                            </template>
+                                        </template>
+                                    </lightning-button-menu>
+                                </div>
+                                <div class="slds-m-top_large">
+                                    <lightning-button type="submit"
+                                                      label="Update card"
+                                                      class="slds-m-top_large">
+                                    </lightning-button>
+                                </div>
+
+                            </lightning-record-edit-form>
+                        </div>
+                        <div class="slds-float_right del-margin">
+                            <lightning-button variant="destructive"
+                                              label="Delete"
+                                              title="Delete action"
+                                              icon-name="utility:delete"
+                                              icon-position="right"
+                                              onclick={handleDeleteCard}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+</template>

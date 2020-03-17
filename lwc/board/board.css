@@ -1,0 +1,13 @@
+.boards-name-input {
+    border: none;
+    background: none;
+    width: 8rem;
+}
+
+.board-name {
+    font-family: Verdana;
+    font-style: italic;
+    margin: 1rem;
+    font-size: medium;
+    display: inline-block;
+}
