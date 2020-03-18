@@ -11,7 +11,7 @@ public with sharing class BoardService {
         insert board;
     }
 
-    public List<List__c> getListsByBoardId(Board__c board) {
+    public List<List__c> getListsByBoard(Board__c board) {
         List<List__c> lists = [
                 SELECT Id, Name, (SELECT Id, Name, Description__c FROM Cards__r ORDER BY CreatedDate)
                 FROM List__c

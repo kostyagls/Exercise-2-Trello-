@@ -23,9 +23,9 @@ public with sharing class BoardController {
     }
 
     @AuraEnabled
-    public static List<List__c> getListsByBoardId(Board__c board) {
+    public static List<List__c> getListsByBoard(Board__c board) {
         try {
-           return boardService.getListsByBoardId(board);
+           return boardService.getListsByBoard(board);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

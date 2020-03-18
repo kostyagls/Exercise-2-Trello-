@@ -3,7 +3,7 @@ import {CurrentPageReference} from 'lightning/navigation';
 import {registerListener, unregisterAllListeners} from 'c/pubsub';
 import { fireEvent } from 'c/pubsub'
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
-import getListsByBoardId from '@salesforce/apex/BoardController.getListsByBoardId';
+import getListsByBoardId from '@salesforce/apex/BoardController.getListsByBoard';
 import saveNewList from '@salesforce/apex/BoardController.createNewList';
 import changeBoardName from '@salesforce/apex/BoardController.changeBoardName';
 import changeCardListId from '@salesforce/apex/BoardController.changeCardListId';
