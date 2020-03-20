@@ -1,6 +1,6 @@
 import {LightningElement, api, track} from 'lwc';
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
-import getCardsByList from '@salesforce/apex/ListController.getCardsByList';
+import getCardsByListId from '@salesforce/apex/ListController.getCardsByListId';
 import saveNewCard from '@salesforce/apex/ListController.createNewCard';
 import changeListName from '@salesforce/apex/ListController.changeListName';
 import deleteList from '@salesforce/apex/ListController.deleteList';
@@ -22,12 +22,13 @@ export default class List extends LightningElement {
 
     @api
     loadCards() {
-        getCardsByList({cList: this.list})
+        getCardsByListId({cListId: this.list.Id})
             .then(result => {
                 this.cards = result;
             })
             .catch(error => {
-                const title = 'ERROR. Can not get data';
+                console.log(JSON.stringify(error));
+                const title = 'ERROR. ' + error.body.message;
                 const variant = 'error';
                 this.showNotification(title, variant);
             });
@@ -46,7 +47,7 @@ export default class List extends LightningElement {
     }
 
     handleClickSave() {
-        saveNewCard({name: this.cardName, cList: this.list})
+        saveNewCard({name: this.cardName, cListId: this.list.Id})
             .then(result => {
                     const title = 'Card created';
                     const variant = 'success';

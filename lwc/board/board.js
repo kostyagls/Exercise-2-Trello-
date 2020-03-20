@@ -3,10 +3,10 @@ import {CurrentPageReference} from 'lightning/navigation';
 import {registerListener, unregisterAllListeners} from 'c/pubsub';
 import { fireEvent } from 'c/pubsub'
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
-import getListsByBoardId from '@salesforce/apex/BoardController.getListsByBoard';
+import getListsByBoardId from '@salesforce/apex/BoardController.getListsByBoardId';
 import saveNewList from '@salesforce/apex/BoardController.createNewList';
 import changeBoardName from '@salesforce/apex/BoardController.changeBoardName';
-import changeCardListId from '@salesforce/apex/BoardController.changeCardListId';
+import changeCardListId from '@salesforce/apex/BoardController.changeListIdOnCard';
 import deleteBoard from '@salesforce/apex/BoardController.deleteBoard';
 import getMembers from '@salesforce/apex/BoardController.getMembers';
 import getUsers from '@salesforce/apex/BoardController.getUsers';
@@ -41,7 +41,7 @@ export default class Board extends LightningElement {
 
     handleLoadBoardEvent(board) {
         this.board = board;
-        getListsByBoardId({board: this.board})
+        getListsByBoardId({boardId: this.board.Id})
             .then(result => {
                 this.lists = result;
             })
@@ -66,7 +66,7 @@ export default class Board extends LightningElement {
     }
 
     handleSave() {
-        saveNewList({name: this.listName, board: this.board})
+        saveNewList({name: this.listName, boardId: this.board.Id})
             .then(result => {
                     const title = 'List is created';
                     const variant = 'success';
@@ -164,7 +164,7 @@ export default class Board extends LightningElement {
     }
 
     loadMembers() {
-        getMembers({board: this.board})
+        getMembers({boardId: this.board.Id})
             .then(result => {
                 this.members = [];
                 result.forEach(value =>  this.members.push(value.User__r));
@@ -193,7 +193,7 @@ export default class Board extends LightningElement {
 
     handleClickAddMember(event) {
         const eventUser = event.target.value;
-        addMember({board: this.board, userId: eventUser.Id})
+        addMember({boardId: this.board.Id, userId: eventUser.Id})
             .then(result => {
                 this.members.push(eventUser);
                 this.users = this.users.filter(user => user.Id !== eventUser.Id );

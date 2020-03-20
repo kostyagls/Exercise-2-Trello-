@@ -4,7 +4,7 @@ private class TestListController {
 
 
     @IsTest
-    static void testGetCardsByList() {
+    static void testGetCardsByListId() {
 
         TestDataFactory.insertBoardAndListTestData();
         List<List__c> lists = [SELECT Id FROM List__c];
@@ -12,7 +12,7 @@ private class TestListController {
         Card__c card = new Card__c(Name = 'testCard', List__c = lists[0].Id);
         insert card;
 
-        List<Card__c> result = ListController.getCardsByList(lists[0]);
+        List<Card__c> result = ListController.getCardsByListId(lists[0].Id);
         System.assertEquals(1, result.size());
     }
 
@@ -26,7 +26,7 @@ private class TestListController {
         Boolean isException = false;
         Test.startTest();
         try {
-            ListController.createNewCard( ' ', lists[0]);
+            ListController.createNewCard( ' testCard', lists[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -44,7 +44,7 @@ private class TestListController {
         Boolean isException = false;
         Test.startTest();
         try {
-            ListController.createNewCard( 'testCard', lists[0]);
+            ListController.createNewCard( 'testCard', lists[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -187,7 +187,7 @@ private class TestListController {
         CardUser__c cardUser = new CardUser__c(Card__c = cards[0].Id, BoardUser__c = boardUsers[0].Id);
         insert cardUser;
 
-        List<CardUser__c> result = ListController.getCardMembers(cards[0]);
+        List<CardUser__c> result = ListController.getCardMembers(cards[0].Id);
         System.assertEquals(users[0].Name, result[0].BoardUser__r.User__r.Name);
 
     }
@@ -210,7 +210,7 @@ private class TestListController {
         insert boardUser;
         List<BoardUser__c> boardUsers = [SELECT Id FROM BoardUser__c];
 
-        List<BoardUser__c> result = ListController.getBoardMembers(boards[0]);
+        List<BoardUser__c> result = ListController.getBoardMembers(boards[0].Id);
         System.assertEquals(users[0].Name, result[0].User__r.Name);
 
     }
@@ -235,7 +235,7 @@ private class TestListController {
         Boolean isException = false;
         Test.startTest();
         try {
-            ListController.addCardMember(cards[0], boardUsers[0].Id);
+            ListController.addCardMember(cards[0].Id, boardUsers[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -267,7 +267,7 @@ private class TestListController {
         Boolean isException = false;
         Test.startTest();
         try {
-            ListController.deleteCardMember(cards[0], boardUsers[0].Id);
+            ListController.deleteCardMember(cards[0].Id, boardUsers[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }

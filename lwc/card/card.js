@@ -75,7 +75,7 @@ export default class Card extends LightningElement {
     }
 
     loadCardMembers() {
-        getCardMembers({card: this.card})
+        getCardMembers({cardId: this.card.Id})
             .then(result => {
                 this.cardMembers = [];
                 result.forEach(resElement => this.cardMembers.push({
@@ -87,11 +87,14 @@ export default class Card extends LightningElement {
                 this.loadBoardMembers();
             })
             .catch(error => {
+                const title = 'ERROR. ' + error.body.message;
+                const variant = 'error';
+                this.showNotification(title, variant);
             });
     }
 
     loadBoardMembers() {
-        getBoardMembers({board: this.board})
+        getBoardMembers({boardId: this.board.Id})
             .then(result => {
                 this.boardMembers = [];
                 result.forEach(resElement => this.boardMembers.push({
@@ -105,12 +108,15 @@ export default class Card extends LightningElement {
                 this.boardMembers =  this.boardMembers.filter(boardMember =>  !cardMemberUserIds.includes(boardMember.UserId));
             })
             .catch(error => {
+                const title = 'ERROR. ' + error.body.message;
+                const variant = 'error';
+                this.showNotification(title, variant);
             });
     }
 
     handleClickAddMember(event) {
         const eventMember = event.target.value;
-        addCardMember({card: this.card, boardMemberId: eventMember.BoardUserId})
+        addCardMember({cardId: this.card.Id, boardMemberId: eventMember.BoardUserId})
             .then(result => {
                 this.cardMembers.push(eventMember);
                 this.boardMembers = this.boardMembers.filter(member => member.Id !== eventMember.Id );
@@ -124,13 +130,13 @@ export default class Card extends LightningElement {
 
     handleClickDeleteMember(event) {
         const eventMember = event.target.value;
-        deleteCardMember({card: this.card, boardMemberId: eventMember.BoardUserId})
+        deleteCardMember({cardId: this.card.Id, boardMemberId: eventMember.BoardUserId})
             .then(result => {
                 this.boardMembers.push(eventMember);
                 this.cardMembers = this.cardMembers.filter(member => member.Id !== eventMember.Id );
             })
             .catch(error => {
-                const title = 'ERROR. Member is not deleted';
+                const title = 'ERROR. ' + error.body.message;
                 const variant = 'error';
                 this.showNotification(title, variant);
             });

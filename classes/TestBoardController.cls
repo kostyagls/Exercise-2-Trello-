@@ -23,10 +23,10 @@ private class TestBoardController {
     }
 
     @IsTest
-    static void testGetListsByBoard() {
+    static void testGetListsByBoardId() {
         TestDataFactory.insertBoardAndListTestData();
         List<Board__c> boards = [SELECT Id FROM Board__c];
-        List<List__c> lists = BoardController.getListsByBoard(boards[0]);
+        List<List__c> lists = BoardController.getListsByBoardId(boards[0].Id);
         System.assertEquals(1, lists.size());
     }
 
@@ -37,7 +37,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.createNewList('testList', boards[0]);
+            BoardController.createNewList('testList', boards[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -79,7 +79,7 @@ private class TestBoardController {
     }
 
     @IsTest
-    static void testChangeCardListId() {
+    static void testChangeListIdOnCard() {
         TestDataFactory.insertBoardAndListTestData();
         List<Board__c> boards = [SELECT Id FROM Board__c];
 
@@ -94,7 +94,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.changeCardListId(cards[0], lists[1].Id);
+            BoardController.changeListIdOnCard(cards[0], lists[1].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -103,7 +103,7 @@ private class TestBoardController {
     }
 
     @IsTest
-    static void testChangeCardListIdException() {
+    static void testChangeListIdOnCardException() {
         TestDataFactory.insertBoardAndListTestData();
         List<Board__c> boards = [SELECT Id FROM Board__c];
 
@@ -119,7 +119,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.changeCardListId(cards[0], lists[1].Id);
+            BoardController.changeListIdOnCard(cards[0], lists[1].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -172,7 +172,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.addMember(boards[0], users[0].Id);
+            BoardController.addMember(boards[0].Id, users[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -190,7 +190,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.addMember(boards[0], users[0].Id);
+            BoardController.addMember(boards[0].Id, users[0].Id);
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -209,7 +209,7 @@ private class TestBoardController {
         insert boardUser;
         List<BoardUser__c> boardUsers = [SELECT Id FROM BoardUser__c];
 
-        List<BoardUser__c> result =  BoardController.getMembers(boards[0]);
+        List<BoardUser__c> result =  BoardController.getMembers(boards[0].Id);
         System.assertEquals(users[0].Id, result[0].User__c);
 
     }

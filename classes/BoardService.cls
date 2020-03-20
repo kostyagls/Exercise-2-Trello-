@@ -6,52 +6,93 @@ public with sharing class BoardService {
         return [SELECT Id, Name FROM Board__c ORDER BY CreatedDate];
     }
 
-    public void createNewBoard(String name) {
-        Board__c board = new Board__c(Name = name);
-        insert board;
+    public void createNewBoard(List<String> names) {
+        List<Board__c> boards = new List<Board__c>();
+        for (String name : names) {
+            Board__c board = new Board__c(Name = name);
+            boards.add(board);
+        }
+        insert boards;
     }
 
-    public List<List__c> getListsByBoard(Board__c board) {
+    public Map<Id, List<List__c>> getListsByBoardId(List<Id> boardIds) {
+        Map<Id, List<List__c>> listsByBoardId = new Map<Id, List<List__c>>();
         List<List__c> lists = [
-                SELECT Id, Name, (SELECT Id, Name, Description__c FROM Cards__r ORDER BY CreatedDate)
+                SELECT Id, Name, Board__c, (SELECT Id, Name, Description__c FROM Cards__r ORDER BY CreatedDate)
                 FROM List__c
-                WHERE Board__c = :board.id
+                WHERE Board__c = :boardIds
                 ORDER BY CreatedDate
         ];
-        return lists;
+        for (Id boardId : boardIds) {
+            List<List__c> lists2 = new List<List__c>();
+            for (List__c cList : lists) {
+                if (cList.Board__c == boardId) {
+                    lists2.add(cList);
+                }
+            }
+            listsByBoardId.put(boardId, lists2);
+        }
+        return listsByBoardId;
     }
 
-    public void createNewList(String name, Board__c board) {
-        List__c cList = new List__c(Name = name, Board__c = board.Id);
-        insert cList;
+    public void createNewList(Map<Id, String> nameByBoardId) {
+        List<List__c> lists = new List<List__c>();
+        for (Id boardId : nameByBoardId.keySet()) {
+            List__c cList = new List__c(Name = nameByBoardId.get(boardId), Board__c = boardId);
+            lists.add(cList);
+        }
+        insert lists;
     }
 
-    public void changeBoardName(Board__c board, String newName) {
-        board.Name = newName;
-        update board;
+    public void changeBoardName(Map<Board__c, String> nameByBoard) {
+        List<Board__c> boards = new List<Board__c>();
+        for (Board__c board : nameByBoard.keySet()) {
+            board.Name = nameByBoard.get(board);
+            boards.add(board);
+        }
+        update boards;
     }
 
-    public void changeCardListId(Card__c card, Id listId) {
-        card.List__c = listId;
-        update card;
+    public void changeListIdOnCard(Map<Card__c, Id> listIdByCard) {
+        List<Card__c> cards = new List<Card__c>();
+        for (Card__c card : listIdByCard.keySet()) {
+            card.List__c = listIdByCard.get(card);
+            cards.add(card);
+        }
+        update cards;
     }
 
-    public void deleteBoard(Board__c board) {
-        delete board;
+    public void deleteBoard(List<Board__c> boards) {
+        delete boards;
     }
 
-    public void addMember(Board__c board, Id userId) {
-        BoardUser__c boardUser = new BoardUser__c(Board__c = board.Id, User__c = userId);
-        insert boardUser;
+    public void addMember(Map<Id, Id> userByBoard) {
+        List<BoardUser__c> boardUsers = new List<BoardUser__c>();
+
+        for (Id boardId : userByBoard.keySet()) {
+            BoardUser__c boardUser = new BoardUser__c(Board__c = boardId, User__c = userByBoard.get(boardId));
+            boardUsers.add(boardUser);
+        }
+        insert boardUsers;
     }
 
-    public List<BoardUser__c> getMembers(Board__c board) {
+    public Map<Id, List<BoardUser__c>> getMembers(List<Id> boardIds) {
+        Map<Id, List<BoardUser__c>> boardUsersByBoardId = new Map<Id, List<BoardUser__c>>();
         List<BoardUser__c> boardUsers = [
-                SELECT Id, User__c, User__r.Name
+                SELECT Id, User__c, User__r.Name, Board__c
                 FROM BoardUser__c
-                WHERE Board__c = :board.Id
+                WHERE Board__c = :boardIds
         ];
-        return boardUsers;
+        for (Id boardId : boardIds) {
+            List<BoardUser__c> boardUsers2 = new List<BoardUser__c>();
+            for (BoardUser__c boardUser : boardUsers) {
+                if (boardUser.Board__c == boardId) {
+                    boardUsers2.add(boardUser);
+                }
+            }
+            boardUsersByBoardId.put(boardId, boardUsers2);
+        }
+        return boardUsersByBoardId;
     }
 
     public List<User> getUsers() {
@@ -75,7 +116,7 @@ public with sharing class BoardService {
     public void shareAccessToBoards(List<BoardUser__c> boardUsers) {
         List<Board__Share> boardShares = new List<Board__Share>();
 
-        for(BoardUser__c boardUser : boardUsers) {
+        for (BoardUser__c boardUser : boardUsers) {
             Board__Share boardShare = new Board__Share();
             boardShare.UserOrGroupId = boardUser.User__c;
             boardShare.ParentId = boardUser.Board__c;
@@ -96,7 +137,6 @@ public with sharing class BoardService {
                 }
             }
         }
-
         delete boardSharesForDelete;
     }
 

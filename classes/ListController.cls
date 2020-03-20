@@ -4,18 +4,22 @@ public with sharing class ListController {
     private static ListService listService = new ListService();
 
     @AuraEnabled
-    public static List<Card__c> getCardsByList(List__c cList) {
+    public static List<Card__c> getCardsByListId(Id cListId) {
         try {
-            return listService.getCardsByList(cList);
+            List<Id> cListIds = new List<Id>();
+            cListIds.add(cListId);
+            return listService.getCardsByListId(cListIds).get(cListId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
     @AuraEnabled
-    public static void createNewCard(String name, List__c cList) {
+    public static void createNewCard(String name, Id cListId) {
         try {
-            listService.createNewCard(name, cList);
+            Map<Id, String> nameByListId = new Map<Id, String>();
+            nameByListId.put(cListId, name);
+            listService.createNewCard(nameByListId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -24,7 +28,9 @@ public with sharing class ListController {
     @AuraEnabled
     public static void changeListName(List__c cList, String newName) {
         try {
-            listService.changeListName(cList, newName);
+            Map<List__c, String> nameByList = new Map<List__c, String>();
+            nameByList.put(cList, newName);
+            listService.changeListName(nameByList);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -33,7 +39,9 @@ public with sharing class ListController {
     @AuraEnabled
     public static void deleteList(List__c cList) {
         try {
-            listService.deleteList(cList);
+            List<List__c> lists = new List<List__c>();
+            lists.add(cList);
+            listService.deleteList(lists);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -42,43 +50,53 @@ public with sharing class ListController {
     @AuraEnabled
     public static void deleteCard(Card__c card) {
         try {
-            listService.deleteCard(card);
+            List<Card__c> cards = new List<Card__c>();
+            cards.add(card);
+            listService.deleteCard(cards);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
     @AuraEnabled
-    public static List<CardUser__c> getCardMembers(Card__c card) {
+    public static List<CardUser__c> getCardMembers(Id cardId) {
         try {
-            return listService.getCardMembers(card);
+            List<Id> cardIds = new List<Id>();
+            cardIds.add(cardId);
+            return listService.getCardsMembers(cardIds).get(cardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
     @AuraEnabled
-    public static List<BoardUser__c> getBoardMembers(Board__c board) {
+    public static List<BoardUser__c> getBoardMembers(Id boardId) {
         try {
-            return listService.getBoardMembers(board);
+            List<Id> boardIds = new List<Id>();
+            boardIds.add(boardId);
+            return listService.getBoardMembers(boardIds).get(boardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
     @AuraEnabled
-    public static void addCardMember(Card__c card, Id boardMemberId) {
+    public static void addCardMember(Id cardId, Id boardMemberId) {
         try {
-            listService.addCardMember(card, boardMemberId);
+            Map<Id,Id> boardMemberIdByCardId = new Map<Id, Id>();
+            boardMemberIdByCardId.put(cardId, boardMemberId);
+            listService.addCardMember(boardMemberIdByCardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
     @AuraEnabled
-    public static void deleteCardMember(Card__c card, Id boardMemberId ) {
+    public static void deleteCardMember(Id cardId, Id boardMemberId ) {
         try {
-            listService.deleteCardMember(card, boardMemberId);
+            Map<Id, Id> boardMemberIdByCardId = new Map<Id, Id>();
+            boardMemberIdByCardId.put(cardId, boardMemberId);
+            listService.deleteCardMember(boardMemberIdByCardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
