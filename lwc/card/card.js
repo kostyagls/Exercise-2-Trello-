@@ -5,6 +5,11 @@ import getBoardMembers from '@salesforce/apex/BoardController.getMembers';
 import getCardMembers from '@salesforce/apex/ListController.getCardMembers';
 import addCardMember from '@salesforce/apex/ListController.addCardMember';
 import deleteCardMember from '@salesforce/apex/ListController.deleteCardMember';
+import createFile from '@salesforce/apex/ListController.createFile';
+import getFiles from '@salesforce/apex/ListController.getFiles';
+import deleteFile from '@salesforce/apex/ListController.deleteFile';
+
+
 
 export default class Card extends LightningElement {
     @api card;
@@ -12,10 +17,13 @@ export default class Card extends LightningElement {
     @track isModalOpen;
     @track boardMembers;
     @track cardMembers;
+    @track fileName;
+    @track attachments;
 
     handleClickCard() {
         this.isModalOpen = true;
         this.loadCardMembers();
+        this.loadAttachments();
     }
 
     handleClickCloseModel() {
@@ -37,10 +45,11 @@ export default class Card extends LightningElement {
         this.dispatchEvent(updateCardEvent);
     }
 
-    showNotification(title, variant) {
+    showNotification(title, variant, message) {
         const evt = new ShowToastEvent({
             title: title,
             variant: variant,
+            message: message
         });
         this.dispatchEvent(evt);
     }
@@ -87,9 +96,10 @@ export default class Card extends LightningElement {
                 this.loadBoardMembers();
             })
             .catch(error => {
-                const title = 'ERROR. ' + error.body.message;
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -97,20 +107,23 @@ export default class Card extends LightningElement {
         getBoardMembers({boardId: this.board.Id})
             .then(result => {
                 this.boardMembers = [];
-                result.forEach(resElement => this.boardMembers.push({
-                    "Id": resElement.Id,
-                    "UserId": resElement.User__c,
-                    "UserName": resElement.User__r.Name,
-                    "BoardUserId": resElement.Id
-                }));
+                if (result) {
+                    result.forEach(resElement => this.boardMembers.push({
+                        "Id": resElement.Id,
+                        "UserId": resElement.User__c,
+                        "UserName": resElement.User__r.Name,
+                        "BoardUserId": resElement.Id
+                    }));
+                }
                 let cardMemberUserIds = [];
                 this.cardMembers.forEach(member =>  cardMemberUserIds.push(member.UserId));
                 this.boardMembers =  this.boardMembers.filter(boardMember =>  !cardMemberUserIds.includes(boardMember.UserId));
             })
             .catch(error => {
-                const title = 'ERROR. ' + error.body.message;
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -123,8 +136,9 @@ export default class Card extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Member is not added';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -136,11 +150,84 @@ export default class Card extends LightningElement {
                 this.cardMembers = this.cardMembers.filter(member => member.Id !== eventMember.Id );
             })
             .catch(error => {
-                const title = 'ERROR. ' + error.body.message;
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
+    loadAttachments() {
+        getFiles({cardId: this.card.Id})
+            .then(result => {
+                if (result){
+                    this.attachments = result;
+                } else {
+                    this.attachments = [];
+                }
+
+            })
+            .catch(error => {
+                const title = 'ERROR';
+                const message =  error.body.message;
+                const variant = 'error';
+                this.showNotification(title, variant, message);
+            });
+    }
+
+    handleFilesChange(event) {
+        if(event.target.files.length > 0) {
+            const filesUploaded = event.target.files;
+            this.fileName = event.target.files[0].name;
+            this.getFileContent(filesUploaded[0]);
+        }
+    }
+
+    getFileContent(file) {
+        const fileReader = new FileReader();
+        // set onload function of FileReader object
+        fileReader.onloadend = (() => {
+            let fileContents = fileReader.result;
+            const base64 = 'base64,';
+            const content = fileContents.indexOf(base64) + base64.length;
+            fileContents = fileContents.substring(content);
+            this.saveFile(fileContents);
+
+        });
+        fileReader.readAsDataURL(file);
+    }
+
+    saveFile(fileContents) {
+        createFile({fileName: this.fileName, fileContents: fileContents, card: this.card})
+            .then(result => {
+                let title = 'File "' + this.fileName + '" is upload!';
+                const variant = 'success';
+                this.showNotification(title, variant);
+                this.attachments.push(...result);
+            })
+            .catch(error => {
+                const title = 'ERROR';
+                const message =  error.body.message;
+                const variant = 'error';
+                this.showNotification(title, variant, message);
+            });
+    }
+
+    handleClickDeleteAttachment(event) {
+        const eventAttachment = event.target.value;
+        deleteFile({file: eventAttachment, cardName: this.card.Name})
+            .then(result => {
+                this.attachments = this.attachments.filter(attachment => attachment.Id !== eventAttachment.Id);
+                const title = 'Attachment is deleted!';
+                const variant = 'success';
+                this.showNotification(title, variant);
+            })
+            .catch(error => {
+                const title = 'ERROR';
+                const message =  error.body.message;
+                const variant = 'error';
+                this.showNotification(title, variant, message);
+            });
+    }
 
 }

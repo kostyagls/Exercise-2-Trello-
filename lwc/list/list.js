@@ -28,9 +28,10 @@ export default class List extends LightningElement {
             })
             .catch(error => {
                 console.log(JSON.stringify(error));
-                const title = 'ERROR. ' + error.body.message;
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -56,16 +57,18 @@ export default class List extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Card is not created';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
         this.handleClickCloseModel();
     }
 
-    showNotification(title, variant) {
+    showNotification(title, variant, message) {
         const evt = new ShowToastEvent({
             title: title,
             variant: variant,
+            message: message
         });
         this.dispatchEvent(evt);
     }
@@ -103,8 +106,9 @@ export default class List extends LightningElement {
             })
             .catch(error => {
                 const title = 'List is not deleted!';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
         this.handleClickCloseDeleteListModel();
     }

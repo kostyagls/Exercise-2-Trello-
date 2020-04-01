@@ -276,6 +276,63 @@ private class TestListController {
     }
 
 
+    @IsTest
+    static void testGetFiles() {
+        Card__c card = new Card__c(Name = 'testCard');
+        insert card;
+        List<Card__c> cards = [SELECT Id FROM Card__c];
+
+        File__c file = new File__c(Name = 'testFile', Card__c = cards[0].Id);
+        insert file;
+
+        List<File__c> result = ListController.getFiles(cards[0].Id);
+        System.assertEquals(1, result.size());
+
+    }
+
+    @IsTest
+    static void testCreateFile() {
+        Test.setMock(HttpCalloutMock.class, new DropBoxHttpCalloutMock());
+        Card__c card = new Card__c(Name = 'testCard');
+        insert card;
+        List<Card__c> cards = [SELECT Id, Name FROM Card__c];
+
+        String fileName = 'testFile.txt';
+        String fileContents = 'aGVsbG8=';
+
+        Boolean isException = false;
+        Test.startTest();
+        try {
+            List<File__c> result = ListController.createFile(fileName, fileContents, cards[0]);
+        } catch (AuraHandledException e) {
+            isException = true;
+        }
+        Test.stopTest();
+        System.assertEquals(false, isException);
+    }
+
+    @IsTest
+    static void testDeleteFile() {
+        Test.setMock(HttpCalloutMock.class, new DropBoxHttpCalloutMock());
+        Card__c card = new Card__c(Name = 'testCard');
+        insert card;
+        List<Card__c> cards = [SELECT Id, Name FROM Card__c];
+
+        File__c file = new File__c(Name = 'testFile.txt', Card__c = cards[0].Id);
+        insert file;
+        List<File__c> files = [SELECT Id,Name FROM File__c];
+
+        Boolean isException = false;
+        Test.startTest();
+        try {
+            ListController.deleteFile(files[0], cards[0].Name);
+        } catch (AuraHandledException e) {
+            isException = true;
+        }
+        Test.stopTest();
+        System.assertEquals(false, isException);
+    }
+
 
 
 }

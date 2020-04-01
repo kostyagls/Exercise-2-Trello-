@@ -3,7 +3,7 @@
     <template if:true={board}>
 
         <h2 class="board-name">
-            <input type="text" value={board.Name} class="boards-name-input" onchange={handleNameChange} />
+            <input type="text" value={board.Name} class="boards-name-input" onchange={handleNameChange}/>
         </h2>
 
         <lightning-button-menu alternative-text="Show menu">
@@ -12,8 +12,9 @@
         </lightning-button-menu>
 
         <div class="slds-card__body_inner">
-            <template if:true={lists}>
-                <lightning-layout multiple-rows="true" pull-to-boundary="small">
+
+            <lightning-layout multiple-rows="true" pull-to-boundary="small">
+                <template if:true={lists}>
                     <template for:each={lists} for:item="list">
                         <lightning-layout-item key={list.Id} size="2" class="slds-p-around_x-small">
                             <c-list list={list}
@@ -25,13 +26,14 @@
                             </c-list>
                         </lightning-layout-item>
                     </template>
-                    <lightning-button label="Add new list"
-                                      icon-name="utility:add"
-                                      class="slds-p-around_x-small"
-                                      onclick={handleClickOnNewList}>
-                    </lightning-button>
-                </lightning-layout>
-            </template>
+                </template>
+                <lightning-button label="Add new list"
+                                  icon-name="utility:add"
+                                  class="slds-p-around_x-small"
+                                  onclick={handleClickOnNewList}>
+                </lightning-button>
+            </lightning-layout>
+
         </div>
     </template>
 

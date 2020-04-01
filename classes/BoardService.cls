@@ -15,6 +15,26 @@ public with sharing class BoardService {
         insert boards;
     }
 
+//    public Map<Id, List<List__c>> getListsByBoardId(List<Id> boardIds) {
+//        Map<Id, List<List__c>> listsByBoardId = new Map<Id, List<List__c>>();
+//        List<List__c> lists = [
+//                SELECT Id, Name, Board__c, (SELECT Id, Name, Description__c FROM Cards__r ORDER BY CreatedDate)
+//                FROM List__c
+//                WHERE Board__c = :boardIds
+//                ORDER BY CreatedDate
+//        ];
+//        for (Id boardId : boardIds) {
+//            List<List__c> lists2 = new List<List__c>();
+//            for (List__c cList : lists) {
+//                if (cList.Board__c == boardId) {
+//                    lists2.add(cList);
+//                }
+//            }
+//            listsByBoardId.put(boardId, lists2);
+//        }
+//        return listsByBoardId;
+//    }
+
     public Map<Id, List<List__c>> getListsByBoardId(List<Id> boardIds) {
         Map<Id, List<List__c>> listsByBoardId = new Map<Id, List<List__c>>();
         List<List__c> lists = [
@@ -23,14 +43,12 @@ public with sharing class BoardService {
                 WHERE Board__c = :boardIds
                 ORDER BY CreatedDate
         ];
-        for (Id boardId : boardIds) {
-            List<List__c> lists2 = new List<List__c>();
-            for (List__c cList : lists) {
-                if (cList.Board__c == boardId) {
-                    lists2.add(cList);
-                }
+        for (List__c cList : lists){
+            if (listsByBoardId.keySet().contains(cList.Board__c)) {
+                listsByBoardId.get(cList.Board__c).add(cList);
+            } else {
+                listsByBoardId.put(cList.Board__c, new List<List__c>{cList});
             }
-            listsByBoardId.put(boardId, lists2);
         }
         return listsByBoardId;
     }
@@ -76,6 +94,25 @@ public with sharing class BoardService {
         insert boardUsers;
     }
 
+//    public Map<Id, List<BoardUser__c>> getMembers(List<Id> boardIds) {
+//        Map<Id, List<BoardUser__c>> boardUsersByBoardId = new Map<Id, List<BoardUser__c>>();
+//        List<BoardUser__c> boardUsers = [
+//                SELECT Id, User__c, User__r.Name, Board__c
+//                FROM BoardUser__c
+//                WHERE Board__c = :boardIds
+//        ];
+//        for (Id boardId : boardIds) {
+//            List<BoardUser__c> boardUsers2 = new List<BoardUser__c>();
+//            for (BoardUser__c boardUser : boardUsers) {
+//                if (boardUser.Board__c == boardId) {
+//                    boardUsers2.add(boardUser);
+//                }
+//            }
+//            boardUsersByBoardId.put(boardId, boardUsers2);
+//        }
+//        return boardUsersByBoardId;
+//    }
+
     public Map<Id, List<BoardUser__c>> getMembers(List<Id> boardIds) {
         Map<Id, List<BoardUser__c>> boardUsersByBoardId = new Map<Id, List<BoardUser__c>>();
         List<BoardUser__c> boardUsers = [
@@ -83,14 +120,13 @@ public with sharing class BoardService {
                 FROM BoardUser__c
                 WHERE Board__c = :boardIds
         ];
-        for (Id boardId : boardIds) {
-            List<BoardUser__c> boardUsers2 = new List<BoardUser__c>();
-            for (BoardUser__c boardUser : boardUsers) {
-                if (boardUser.Board__c == boardId) {
-                    boardUsers2.add(boardUser);
-                }
+
+        for (BoardUser__c boardUser : boardUsers) {
+            if (boardUsersByBoardId.keySet().contains(boardUser.Board__c)) {
+                boardUsersByBoardId.get(boardUser.Board__c).add(boardUser);
+            } else {
+                boardUsersByBoardId.put(boardUser.Board__c, new List<BoardUser__c>{boardUser});
             }
-            boardUsersByBoardId.put(boardId, boardUsers2);
         }
         return boardUsersByBoardId;
     }
@@ -139,5 +175,4 @@ public with sharing class BoardService {
         }
         delete boardSharesForDelete;
     }
-
 }

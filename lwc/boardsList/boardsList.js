@@ -33,8 +33,9 @@ export default class BoardsList extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Board is not created';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant)
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -65,18 +66,20 @@ export default class BoardsList extends LightningElement {
             })
             .catch(error => {
                 const title = 'Board is not created';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant)
+                this.showNotification(title, variant, message);
             });
 
         this.handleClickCloseModel();
 
     }
 
-    showNotification(title, variant) {
+    showNotification(title, variant, message) {
         const evt = new ShowToastEvent({
             title: title,
             variant: variant,
+            message: message
         });
         this.dispatchEvent(evt);
     }

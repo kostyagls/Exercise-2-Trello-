@@ -3,6 +3,8 @@ public with sharing class ListController {
 
     private static ListService listService = new ListService();
 
+    public class CustomException extends Exception {}
+
     @AuraEnabled
     public static List<Card__c> getCardsByListId(Id cListId) {
         try {
@@ -97,6 +99,51 @@ public with sharing class ListController {
             Map<Id, Id> boardMemberIdByCardId = new Map<Id, Id>();
             boardMemberIdByCardId.put(cardId, boardMemberId);
             listService.deleteCardMember(boardMemberIdByCardId);
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static List<File__c> createFile(String fileName, String fileContents, Card__c card) {
+        try {
+            List<File__c> files = [
+                    SELECT Id
+                    FROM File__c
+                    WHERE Name = :fileName AND Card__c = :card.Id
+            ];
+            if (files.size() == 0) {
+                listService.uploadFileToDropBox(fileName, fileContents, card.Name);
+
+                Map <String, Id> cardIdByFileName = new Map<String, Id>();
+                cardIdByFileName.put(fileName, card.Id);
+                return listService.createFile(cardIdByFileName);
+            } else {
+                String errorMessage = 'File with this name have already added to the card!';
+                throw new CustomException(errorMessage);
+            }
+
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static List<File__c> getFiles(Id cardId) {
+        try {
+            List<Id> cardIds = new List<Id>{cardId};
+            return listService.getFiles(cardIds).get(cardId);
+        } catch (Exception e) {
+            throw new AuraHandledException(e.getMessage());
+        }
+    }
+
+    @AuraEnabled
+    public static void deleteFile(File__c file, String cardName) {
+        try {
+            listService.deleteFileFromDropBox(file.Name, cardName);
+            List<File__c> files = new List<File__c>{file};
+            listService.deleteFiles(files);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

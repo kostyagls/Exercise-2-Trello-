@@ -47,8 +47,9 @@ export default class Board extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Can not get data';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
 
     }
@@ -75,18 +76,19 @@ export default class Board extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. List is not created';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
-
+                this.showNotification(title, variant, message);
             });
         this.handleClickCloseModel();
 
     }
 
-    showNotification(title, variant) {
+    showNotification(title, variant, message) {
         const evt = new ShowToastEvent({
             title: title,
             variant: variant,
+            message: message
         });
         this.dispatchEvent(evt);
     }
@@ -122,9 +124,10 @@ export default class Board extends LightningElement {
                 this.handleUpdateCards();
             })
             .catch(error => {
-                const title = 'ERROR. ' + error.body.message;
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -144,9 +147,10 @@ export default class Board extends LightningElement {
                 this.board = false;
             })
             .catch(error => {
-                const title = 'ERROR. ';
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -167,13 +171,16 @@ export default class Board extends LightningElement {
         getMembers({boardId: this.board.Id})
             .then(result => {
                 this.members = [];
-                result.forEach(value =>  this.members.push(value.User__r));
+                if (result){
+                    result.forEach(value =>  this.members.push(value.User__r));
+                }
                 this.loadUsers();
             })
             .catch(error => {
-                const title = 'ERROR. Can not get data';
+                const title = 'ERROR';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -186,8 +193,9 @@ export default class Board extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Can not get data';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
     }
 
@@ -200,8 +208,9 @@ export default class Board extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Member is not added';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
 
     }
@@ -215,8 +224,9 @@ export default class Board extends LightningElement {
             })
             .catch(error => {
                 const title = 'ERROR. Member is not deleted';
+                const message =  error.body.message;
                 const variant = 'error';
-                this.showNotification(title, variant);
+                this.showNotification(title, variant, message);
             });
 
 
