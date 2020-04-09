@@ -53,7 +53,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.changeBoardName(boards[0], 'TestList');
+            BoardController.changeBoardName(boards[0].Id, 'TestList');
         } catch (AuraHandledException e) {
             isException = true;
         }
@@ -70,7 +70,7 @@ private class TestBoardController {
         Boolean isException = false;
         Test.startTest();
         try {
-            BoardController.changeBoardName(boards[0], 'TestList');
+            BoardController.changeBoardName(boards[0].Id, 'TestList');
         } catch (AuraHandledException e) {
             isException = true;
         }

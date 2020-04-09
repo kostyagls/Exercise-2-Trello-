@@ -106,7 +106,15 @@ export default class Board extends LightningElement {
     }
 
     setNewBoardName(name) {
-        changeBoardName({board: this.board, newName: name});
+        changeBoardName({boardId: this.board.Id, newName: name})
+            .then(result => {
+            })
+            .catch(error => {
+                const title = 'ERROR';
+                const message =  error.body.message;
+                const variant = 'error';
+                this.showNotification(title, variant, message);
+            });
     }
 
     handleUpdateLists() {

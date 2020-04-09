@@ -47,10 +47,10 @@ public with sharing class BoardController {
     }
 
     @AuraEnabled
-    public static void changeBoardName(Board__c board, String newName) {
+    public static void changeBoardName(Id boardId, String newName) {
         try {
-            Map<Board__c,String> nameByBoard = new Map<Board__c, String>();
-            nameByBoard.put(board, newName);
+            Map<Id,String> nameByBoard = new Map<Id, String>();
+            nameByBoard.put(boardId, newName);
             boardService.changeBoardName(nameByBoard);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -71,8 +71,7 @@ public with sharing class BoardController {
     @AuraEnabled
     public static void deleteBoard(Board__c board){
         try {
-            List<Board__c> boards = new List<Board__c>();
-            boards.add(board);
+            List<Board__c> boards = new List<Board__c>{board};
             boardService.deleteBoard(boards);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());

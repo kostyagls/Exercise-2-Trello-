@@ -1,11 +1,9 @@
 
 public with sharing class ListService {
 
-    private static String accessToken = 'e7C7DiA8zrAAAAAAAAAAOSRmkObiRGO6fhpVH0ClqCLq6qgRnqk9ulrZYe71-RRU';
-
     public class CustomException extends Exception {}
 
-    public Map<Id, List<Card__c>> getCardsByListId(List<Id> cListIds) {
+    public Map<Id, List<Card__c>> getCardsOnLists(List<Id> cListIds) {
         Map<Id, List<Card__c>> cardsByListId = new Map<Id, List<Card__c>>();
         List<Card__c> cards = [
                 SELECT Id, Name, Description__c, Due_Date__c, List__c
@@ -13,15 +11,13 @@ public with sharing class ListService {
                 WHERE List__c = :cListIds
                 ORDER BY CreatedDate
         ];
-        for (Id cListId : cListIds) {
-            List<Card__c> cards2 = new List<Card__c>();
-            for (Card__c card : cards) {
-                if (card.List__c == cListId) {
-                    cards2.add(card);
-                }
-            }
-            cardsByListId.put(cListId, cards2);
 
+        for (Card__c card : cards){
+            if (cardsByListId.keySet().contains(card.List__c)) {
+                cardsByListId.get(card.List__c).add(card);
+            } else {
+                cardsByListId.put(card.List__c, new List<Card__c>{card});
+            }
         }
         return cardsByListId;
     }
@@ -59,14 +55,13 @@ public with sharing class ListService {
                 FROM CardUser__c
                 WHERE Card__c = :cardIds
         ];
-        for (Id cardId : cardIds) {
-            List<CardUser__c> cardUsers2 = new List<CardUser__c>();
-            for (CardUser__c cardUser : cardUsers) {
-                if (cardUser.Card__c == cardId) {
-                    cardUsers2.add(cardUser);
-                }
+
+        for (CardUser__c cardUser : cardUsers){
+            if (cardUsersByCardId.keySet().contains(cardUser.Card__c)) {
+                cardUsersByCardId.get(cardUser.Card__c).add(cardUser);
+            } else {
+                cardUsersByCardId.put(cardUser.Card__c, new List<CardUser__c>{cardUser});
             }
-            cardUsersByCardId.put(cardId, cardUsers2);
         }
         return cardUsersByCardId;
     }
@@ -78,14 +73,13 @@ public with sharing class ListService {
                 FROM BoardUser__c
                 WHERE Board__c = :boardIds
         ];
-        for (Id boardId : boardIds) {
-            List<BoardUser__c> boardUsers2 = new List<BoardUser__c>();
-            for (BoardUser__c boardUser : boardUsers) {
-                if (boardUser.Board__c == boardId) {
-                    boardUsers2.add(boardUser);
-                }
+
+        for (BoardUser__c boardUser : boardUsers){
+            if (boardUsersByBoardId.keySet().contains(boardUser.Board__c)) {
+                boardUsersByBoardId.get(boardUser.Board__c).add(boardUser);
+            } else {
+                boardUsersByBoardId.put(boardUser.Board__c, new List<BoardUser__c>{boardUser});
             }
-            boardUsersByBoardId.put(boardId, boardUsers2);
         }
         return boardUsersByBoardId;
     }
@@ -116,6 +110,8 @@ public with sharing class ListService {
     public void uploadFileToDropBox(String fileName, String fileContents, String cardName) {
         Blob blobFileContent = EncodingUtil.base64Decode(fileContents);
         String uploadingFileName = cardName + '_' + fileName;
+        API_token__c token = API_token__c.getValues('DropBox');
+        String accessToken = token.Body__c;
         Http http = new Http();
         HttpRequest request = new HttpRequest();
         request.setEndpoint('https://content.dropboxapi.com/2/files/upload');
@@ -166,6 +162,8 @@ public with sharing class ListService {
     public void deleteFileFromDropBox(String fileName, String cardName) {
         String deletingFileName = cardName + '_' + fileName;
         Http http = new Http();
+        API_token__c token = API_token__c.getValues('DropBox');
+        String accessToken =token.Body__c;
         String body = '{"path": "/TrelloIntegr/' + deletingFileName + '"}';
         HttpRequest request = new HttpRequest();
         request.setEndpoint('https://api.dropboxapi.com/2/files/delete_v2');

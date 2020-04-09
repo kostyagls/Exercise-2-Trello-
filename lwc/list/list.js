@@ -1,6 +1,6 @@
 import {LightningElement, api, track} from 'lwc';
 import {ShowToastEvent} from "lightning/platformShowToastEvent";
-import getCardsByListId from '@salesforce/apex/ListController.getCardsByListId';
+import getCardsByListId from '@salesforce/apex/ListController.getCardsOnList';
 import saveNewCard from '@salesforce/apex/ListController.createNewCard';
 import changeListName from '@salesforce/apex/ListController.changeListName';
 import deleteList from '@salesforce/apex/ListController.deleteList';
@@ -27,7 +27,6 @@ export default class List extends LightningElement {
                 this.cards = result;
             })
             .catch(error => {
-                console.log(JSON.stringify(error));
                 const title = 'ERROR';
                 const message =  error.body.message;
                 const variant = 'error';

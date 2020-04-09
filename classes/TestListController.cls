@@ -12,7 +12,7 @@ private class TestListController {
         Card__c card = new Card__c(Name = 'testCard', List__c = lists[0].Id);
         insert card;
 
-        List<Card__c> result = ListController.getCardsByListId(lists[0].Id);
+        List<Card__c> result = ListController.getCardsOnList(lists[0].Id);
         System.assertEquals(1, result.size());
     }
 

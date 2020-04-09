@@ -6,11 +6,11 @@ public with sharing class ListController {
     public class CustomException extends Exception {}
 
     @AuraEnabled
-    public static List<Card__c> getCardsByListId(Id cListId) {
+    public static List<Card__c> getCardsOnList(Id cListId) {
         try {
             List<Id> cListIds = new List<Id>();
             cListIds.add(cListId);
-            return listService.getCardsByListId(cListIds).get(cListId);
+            return listService.getCardsOnLists(cListIds).get(cListId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
