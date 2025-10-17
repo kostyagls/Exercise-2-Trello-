@@ -7,7 +7,8 @@ public with sharing class BoardController {
     @AuraEnabled
     public static List<Board__c> getAllBoards() {
         try {
-            return boardService.getAllBoards();
+            //sadasdsadad
+            return boardService.getAllBoa rds();
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }

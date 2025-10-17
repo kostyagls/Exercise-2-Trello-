@@ -4,12 +4,13 @@ private class TestBoardController {
 
     @IsTest
     static void testGetAllBoards() {
+        //test
         TestDataFactory.insertBoardAndListTestData();
         List<Board__c> boards = BoardController.getAllBoards();
         System.assertEquals(1, boards.size());
     }
 
-    @IsTest
+    @IsTestt
     static void testCreateNewBoard() {
         Boolean isException = false;
         Test.startTest();
