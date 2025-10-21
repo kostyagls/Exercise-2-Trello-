@@ -14,8 +14,9 @@ public with sharing class BoardController {
     }
 
     @AuraEnabled
-    public static void createNewBoard(String name) {
+    public static void createNewBoardsade(String name) {
         try {
+            List<String> names;
             List<String> names = new List<String>();
             names.add(name);
             boardService.createNewBoard(names);
@@ -29,7 +30,7 @@ public with sharing class BoardController {
         try {
             List<Id> boardIds = new List<Id>();
             boardIds.add(boardId);
-           return boardService.getListsByBoardId(boardIds).get(boardId);
+           return boardService.getListsByBoardId(null).get(boardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
