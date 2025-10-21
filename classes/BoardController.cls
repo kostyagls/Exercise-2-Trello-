@@ -29,7 +29,6 @@ public with sharing class BoardController {
 
     /**
      * Create a new board with the given name
-     *
      * @param boardName The name of the new board
      */
     @AuraEnabled
@@ -46,7 +45,6 @@ public with sharing class BoardController {
 
     /**
      * Get all lists for a given board
-     *
      * @param boardId The Id of the board
      * @return List of List__c records for the board
      */
@@ -56,6 +54,7 @@ public with sharing class BoardController {
             // Prepare a list of board IDs for the service call
             List<Id> boardIds = new List<Id>();
             boardIds.add(boardId);
+            // Pass the correct list of board IDs (not null)
             return boardService.getListsByBoardId(boardIds).get(boardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
@@ -64,7 +63,6 @@ public with sharing class BoardController {
 
     /**
      * Create a new list for a board
-     *
      * @param name The name of the new list
      * @param boardId The Id of the board
      */
@@ -81,7 +79,6 @@ public with sharing class BoardController {
 
     /**
      * Change the name of a board
-     *
      * @param boardId The Id of the board
      * @param newName The new name for the board
      */
@@ -98,7 +95,6 @@ public with sharing class BoardController {
 
     /**
      * Change the list Id on a card
-     *
      * @param card The card to update
      * @param listId The new list Id
      */
@@ -115,7 +111,6 @@ public with sharing class BoardController {
 
     /**
      * Delete a board
-     *
      * @param board The board to delete
      */
     @AuraEnabled
@@ -130,7 +125,6 @@ public with sharing class BoardController {
 
     /**
      * Add a member to a board
-     *
      * @param boardId The Id of the board
      * @param userId The Id of the user to add
      */
@@ -147,7 +141,6 @@ public with sharing class BoardController {
 
     /**
      * Get all members of a board
-     *
      * @param boardId The Id of the board
      * @return List of BoardUser__c records for the board
      */
@@ -164,7 +157,6 @@ public with sharing class BoardController {
 
     /**
      * Get all users
-     *
      * @return List of User records
      */
     @AuraEnabled
@@ -178,7 +170,6 @@ public with sharing class BoardController {
 
     /**
      * Delete a member from a board
-     *
      * @param memberId The Id of the member
      * @param board The board from which to remove the member
      */
@@ -190,5 +181,4 @@ public with sharing class BoardController {
             throw new AuraHandledException(e.getMessage());
         }
     }
-
 }
