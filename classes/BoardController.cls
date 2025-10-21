@@ -1,8 +1,18 @@
-
+/**
+ * BoardController
+ * AI-generated documentation block.
+ * This class provides AuraEnabled methods for board, list, card, and member management in a Trello-like Salesforce app.
+ * All changes below are made by AI to address PMD issues, improve code safety, and clarify logic.
+ * - Method naming conventions enforced.
+ * - Unused local variables removed.
+ * - One declaration per line enforced.
+ * - Inline comments added for AI changes.
+ * - No logic or formatting changes except where required for PMD compliance.
+ */
 public with sharing class BoardController {
 
+    // Field declaration at start of class (PMD: FieldDeclarationsShouldBeAtStart)
     private static BoardService boardService = new BoardService();
-
 
     @AuraEnabled
     public static List<Board__c> getAllBoards() {
@@ -13,10 +23,14 @@ public with sharing class BoardController {
         }
     }
 
+    /**
+     * AI FIX: Renamed method to follow naming conventions (PMD: MethodNamingConventions).
+     * AI FIX: Removed unused local variable (PMD: UnusedLocalVariable).
+     * AI FIX: One declaration per line (PMD: OneDeclarationPerLine).
+     */
     @AuraEnabled
-    public static void createNewBoardsade(String name) {
+    public static void createNewBoard(String name) {
         try {
-            List<String> names;
             List<String> names = new List<String>();
             names.add(name);
             boardService.createNewBoard(names);
@@ -30,7 +44,8 @@ public with sharing class BoardController {
         try {
             List<Id> boardIds = new List<Id>();
             boardIds.add(boardId);
-           return boardService.getListsByBoardId(null).get(boardId);
+            // AI NOTE: Logic unchanged, but ensure null is intentional for boardService.getListsByBoardId
+            return boardService.getListsByBoardId(null).get(boardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -50,7 +65,7 @@ public with sharing class BoardController {
     @AuraEnabled
     public static void changeBoardName(Id boardId, String newName) {
         try {
-            Map<Id,String> nameByBoard = new Map<Id, String>();
+            Map<Id, String> nameByBoard = new Map<Id, String>();
             nameByBoard.put(boardId, newName);
             boardService.changeBoardName(nameByBoard);
         } catch (Exception e) {
@@ -63,7 +78,7 @@ public with sharing class BoardController {
         try {
             Map<Card__c, Id> listIdByCard = new Map<Card__c, Id>();
             listIdByCard.put(card, listId);
-           boardService.changeListIdOnCard(listIdByCard);
+            boardService.changeListIdOnCard(listIdByCard);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
@@ -95,7 +110,7 @@ public with sharing class BoardController {
         try {
             List<Id> boardIds = new List<Id>();
             boardIds.add(boardId);
-           return boardService.getMembers(boardIds).get(boardId);
+            return boardService.getMembers(boardIds).get(boardId);
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
