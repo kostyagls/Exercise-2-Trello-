@@ -1,15 +1,7 @@
-
+// BoardUserTrigger: delegates all logic to handler class for maintainability
 trigger BoardUserTrigger on BoardUser__c (before insert, before delete) {
-    BoardUserTriggerHandler boardUserTriggerHandler = new BoardUserTriggerHandler();
+    BoardUserTriggerHandler handler = new BoardUserTriggerHandler();
     if (Trigger.isBefore) {
-        if (Trigger.isInsert) {
-            boardUserTriggerHandler.beforeInsert(Trigger.new);
-        } else if (Trigger.isDelete) {
-            boardUserTriggerHandler.beforeDelete(Trigger.old);
-
-        } else if (Trigger.update) {
-            boardUserTriggerHandler.beforeInsert(Trigger.new);
-        }
-
+        handler.handle(Trigger.new, Trigger.old);
     }
 }
