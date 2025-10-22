@@ -1,8 +1,8 @@
-import {LightningElement, wire, track} from 'lwc';
-import {CurrentPageReference} from 'lightning/navigation';
-import {registerListener, unregisterAllListeners} from 'c/pubsub';
+import { LightningElement, wire, track } from 'lwc';
+import { CurrentPageReference } from 'lightning/navigation';
+import { registerListener, unregisterAllListeners } from 'c/pubsub';
 import { fireEvent } from 'c/pubsub'
-import {ShowToastEvent} from "lightning/platformShowToastEvent";
+import { ShowToastEvent } from "lightning/platformShowToastEvent";
 import getListsByBoardId from '@salesforce/apex/BoardController.getListsByBoardId';
 import saveNewList from '@salesforce/apex/BoardController.createNewList';
 import changeBoardName from '@salesforce/apex/BoardController.changeBoardName';
@@ -13,32 +13,30 @@ import getUsers from '@salesforce/apex/BoardController.getUsers';
 import addMember from '@salesforce/apex/BoardController.addMember';
 import deleteMember from '@salesforce/apex/BoardController.deleteMember';
 
-
-
+// Board component for Trello-like app
 export default class Board extends LightningElement {
-
     @wire(CurrentPageReference) pageRef;
     @track board;
     @track lists;
     @track isModalOpen;
     @track listName;
-    @track test;
     @track draggedCard;
     @track isDeleteBoardModalOpen;
     @track isMembersModalOpen;
     @track members;
     @track users;
 
+    // Register event listeners
     connectedCallback() {
-        // subscribe to loadBoard event
         registerListener('loadboard', this.handleLoadBoardEvent, this);
     }
 
+    // Unregister event listeners
     disconnectedCallback() {
-        // unsubscribe from bearListUpdate event
         unregisterAllListeners(this);
     }
 
+    // Handle board load event
     handleLoadBoardEvent(board) {
         console.log(board);
         this.board = board;
@@ -52,33 +50,31 @@ export default class Board extends LightningElement {
                 const variant = 'error';
                 this.showNotification(title, variant, message);
             });
-
     }
 
+    // Open new list modal
     handleClickOnNewList() {
-        //test comment
         this.isModalOpen = true;
     }
 
+    // Close modal
     handleClickCloseModel() {
         this.isModalOpen = false;
     }
 
-    handleClickCloseModel() {
-        this.isModalOpen = false;
-    }
-
+    // Handle input for list name
     handleInputName(event) {
         this.listName = event.target.value;
     }
 
+    // Save new list
     handleSave() {
-        save New List({name: this.listName, boardId: this.board.Id})
+        saveNewList({name: this.listName, boardId: this.board.Id})
             .then(result => {
-                    const title = 'List is created';
-                    const variant = 'success';
-                    this.showNotification(title, variant);
-                    this.handleLoadBoardEvent(this.board);
+                const title = 'List is created';
+                const variant = 'success';
+                this.showNotification(title, variant);
+                this.handleLoadBoardEvent(this.board);
             })
             .catch(error => {
                 const title = 'ERROR. List is not created';
@@ -87,9 +83,9 @@ export default class Board extends LightningElement {
                 this.showNotification(title, variant, message);
             });
         this.handleClickCloseModel();
-
     }
 
+    // Show notification
     showNotification(title, variant, message) {
         const evt = new ShowToastEvent({
             title: title,
@@ -99,11 +95,13 @@ export default class Board extends LightningElement {
         this.dispatchEvent(evt);
     }
 
+    // Update cards after change
     handleUpdateCards() {
         const lists = this.template.querySelectorAll('c-list');
         lists.forEach(list => list.loadCards());
     }
 
+    // Handle board name change
     handleNameChange(event) {
         let newName = event.target.value;
         setTimeout(() => {
@@ -111,8 +109,9 @@ export default class Board extends LightningElement {
         }, 3000);
     }
 
+    // Set new board name
     setNewBoardName(name) {
-        changeBoardName(boardId: this.board.Id, newName: name)
+        changeBoardName({boardId: this.board.Id, newName: name})
             .then(result => {
             })
             .catch(error => {
@@ -123,16 +122,19 @@ export default class Board extends LightningElement {
             });
     }
 
+    // Update lists after change
     handleUpdateLists() {
         this.handleLoadBoardEvent(this.board);
     }
 
-    handleListItemDrag(evt) {
-        this.draggedCard = evt.detail;
+    // Handle list item drag
+    handleListItemDrag(event) {
+        this.draggedCard = event.detail;
     }
 
-    handleCardDrop(evt) {
-        let list = evt.detail;
+    // Handle card drop
+    handleCardDrop(event) {
+        let list = event.detail;
         changeCardListId({card: this.draggedCard, listId: list.Id})
             .then(result => {
                 this.handleUpdateCards();
@@ -145,18 +147,21 @@ export default class Board extends LightningElement {
             });
     }
 
+    // Open delete board modal
     handleClickDeleteBoard() {
         this.isDeleteBoardModalOpen = true;
     }
 
-    handleClickCloseDeleteBoardModel() {
+    // Close delete board modal
+    handleClickCloseDeleteBoardModal() {
         this.isDeleteBoardModalOpen = false;
     }
 
+    // Delete board
     handleClickDeleteBoardInModal() {
         deleteBoard({board: this.board})
             .then(result => {
-                this.handleClickCloseDeleteBoardModel();
+                this.handleClickCloseDeleteBoardModal();
                 this.deleteBoardEvent();
                 this.board = false;
             })
@@ -168,19 +173,23 @@ export default class Board extends LightningElement {
             });
     }
 
+    // Fire delete board event
     deleteBoardEvent() {
         fireEvent(this.pageRef, 'deleteboard', this.board);
     }
 
+    // Open members modal
     handleClickMembers() {
         this.isMembersModalOpen = true;
         this.loadMembers();
     }
 
+    // Close members modal
     handleClickCloseMembersModal() {
         this.isMembersModalOpen = false;
     }
 
+    // Load members
     loadMembers() {
         getMembers({boardId: this.board.Id})
             .then(result => {
@@ -198,6 +207,7 @@ export default class Board extends LightningElement {
             });
     }
 
+    // Load users
     loadUsers() {
         getUsers()
             .then(result => {
@@ -213,6 +223,7 @@ export default class Board extends LightningElement {
             });
     }
 
+    // Add member to board
     handleClickAddMember(event) {
         const eventUser = event.target.value;
         addMember({boardId: this.board.Id, userId: eventUser.Id})
@@ -226,9 +237,9 @@ export default class Board extends LightningElement {
                 const variant = 'error';
                 this.showNotification(title, variant, message);
             });
-
     }
 
+    // Delete member from board
     handleClickDeleteMember(event) {
         const eventMember = event.target.value;
         deleteMember({board: this.board, memberId: eventMember.Id})
@@ -242,9 +253,5 @@ export default class Board extends LightningElement {
                 const variant = 'error';
                 this.showNotification(title, variant, message);
             });
-
-
     }
-
-
 }
