@@ -1,29 +1,19 @@
-<!-- Board -->
+<!-- Board LWC HTML for Trello-like app -->
 <template>
     <template if:true={board}>
-
         <h2 class="board-name">
             <input type="text" value={board.Name} class="boards-name-input" onchange={handleNameChange}/>
         </h2>
-
         <lightning-button-menu alternative-text="Show menu">
             <lightning-menu-item label="Members" onclick={handleClickMembers}></lightning-menu-item>
             <lightning-menu-item label="Delete board" onclick={handleClickDeleteBoard}></lightning-menu-item>
         </lightning-button-menu>
-
         <div class="slds-card__body_inner">
-
+            <!-- Lists rendering -->
             <lightning-layout multiple-rows="true" pull-to-boundary="small">
                 <template if:true={lists}>
                     <template for:each={lists} for:item="list">
                         <lightning-layout-item key={list.Id} size="2" class="slds-p-around_x-small">
-                            <c-list list={list}
-                                    board={board}
-                                    oncardchanged={handleUpdateCards}
-                                    onlistdeleted={handleUpdateLists}
-                                    oncarddrag={handleListItemDrag}
-                                    oncarddrop={handleCardDrop}>
-                            </c-list>
                             <c-list list={list}
                                     board={board}
                                     oncardchanged={handleUpdateCards}
@@ -37,13 +27,12 @@
                 <lightning-button label="Add new list"
                                   icon-name="utility:add"
                                   class="slds-p-around_x-small"
-                                  onclick={handleClickOnNewList}>
-                </lightning-button>
+                                  onclick={handleClickOnNewList}></lightning-button>
             </lightning-layout>
-
         </div>
     </template>
 
+    <!-- Modal for new list -->
     <template if:true={isModalOpen} style="text-align: center">
         <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
                  aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
@@ -53,7 +42,6 @@
                 </header>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-1">
                     <div class="slds-m-top_medium slds-m-bottom_x-large">
-
                         <div class="slds-p-around_medium lgc-bg">
                             <lightning-input type="text"
                                              onchange={handleInputName}
@@ -63,7 +51,6 @@
                             </lightning-input>
                         </div>
                     </div>
-
                 </div>
                 <footer class="slds-modal__footer">
                     <button class="slds-button slds-button_neutral" onclick={handleClickCloseModel}>Cancel</button>
@@ -74,10 +61,7 @@
         <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
 
-    test html
-    <br>
-    <br>
-    <br>
+    <!-- Modal for delete board -->
     <template if:true={isDeleteBoardModalOpen}>
         <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
                  aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
@@ -91,51 +75,44 @@
                     </div>
                 </div>
                 <footer class="slds-modal__footer">
-                    <button class="slds-button slds-button_neutral" onclick={handleClickCloseDeleteBoardModel}>
-                        Cancel
-                    </button>
-                    <button class="slds-button slds-button_brand" onclick={handleClickDeleteBoardInModal}>
-                        Delete
-                    </button>
+                    <button class="slds-button slds-button_neutral" onclick={handleClickCloseDeleteBoardModal}>Cancel</button>
+                    <button class="slds-button slds-button_brand" onclick={handleClickDeleteBoardInModal}>Delete</button>
                 </footer>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
 
-
+    <!-- Modal for members -->
     <template if:true={isMembersModalOpen}>
         <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
                  aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
             <div class="slds-modal__container">
                 <header class="slds-modal__header">
                     <lightning-button-icon icon-name="utility:close"
-                                           alternative-text="Close"
-                                           variant="bare-inverse"
-                                           class="slds-modal__close"
-                                           onclick={handleClickCloseMembersModal}>
-                    </lightning-button-icon>
+                                          alternative-text="Close"
+                                          variant="bare-inverse"
+                                          class="slds-modal__close"
+                                          onclick={handleClickCloseMembersModal}></lightning-button-icon>
                     <h2 id="modal-heading-03" class="slds-modal__title slds-hyphenate">Members</h2>
                 </header>
                 <div class="slds-modal__content slds-p-around_medium" id="modal-content-id-3">
-                    <div class="slds-m-top_medium slds-m-bottom_x-large">
+                    <div class="slds-m-top_medium">
                         <div class="slds-p-around_medium lgc-bg">
                             <template if:true={members}>
-
                                 <template for:each={members} for:item="member">
-                                    <lightning-layout-item key={member.Id} size="2" class="slds-p-around_x-small ">
+                                    <lightning-layout-item key={member.Id} size="2" class="slds-p-around_x-small">
                                         <div class="slds-grid slds-gutters slds-box slds-box_x-small">
                                             <div class="slds-col slds-size_2-of-3">
                                                 {member.Name}
                                             </div>
                                             <div class="slds-col slds-size_1-of-3">
                                                 <lightning-button-icon icon-name="utility:delete"
-                                                                       alternative-text="Delete"
-                                                                       class="slds-m-left_xx-small slds-float_right"
-                                                                       title="Delete"
-                                                                       value={member}
-                                                                       onclick={handleClickDeleteMember}>
-                                                </lightning-button-icon>
+                                                                      alternative-text="Delete"
+                                                                      class="slds-m-left_xx-small slds-float_right"
+                                                                      title="Delete"
+                                                                      value={member}
+                                                                      onclick={handleClickDeleteMember}></lightning-button-icon>
                                             </div>
                                         </div>
                                     </lightning-layout-item>
@@ -143,17 +120,15 @@
                             </template>
                             <div class="slds-m-top_medium">
                                 <lightning-button-menu alternative-text="Show menu"
-                                                       tooltip="Add member"
-                                                       menu-alignment="right"
-                                                       icon-name="utility:add"
-                                                       class="slds-m-left_xx-large slds-float_right">
+                                                      menu-alignment="right"
+                                                      icon-name="utility:add"
+                                                      class="slds-m-left_xx-large slds-float_right">
                                     <template if:true={users}>
                                         <template for:each={users} for:item="user">
                                             <lightning-menu-item key={user.Id}
-                                                                 label={user.Name}
-                                                                 value={user}
-                                                                 onclick={handleClickAddMember}>
-                                            </lightning-menu-item>
+                                                                label={user.Name}
+                                                                value={user}
+                                                                onclick={handleClickAddMember}></lightning-menu-item>
                                         </template>
                                     </template>
                                 </lightning-button-menu>
@@ -162,13 +137,10 @@
                     </div>
                 </div>
                 <footer class="slds-modal__footer">
-                    <button class="slds-button slds-button_neutral" onclick={handleClickCloseMembersModal}>
-                        Cancel
-                    </button>
+                    <button class="slds-button slds-button_neutral" onclick={handleClickCloseMembersModal}>Cancel</button>
                 </footer>
             </div>
         </section>
         <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
-
 </template>
