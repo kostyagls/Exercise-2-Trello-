@@ -6,6 +6,10 @@ trigger BoardUserTrigger on BoardUser__c (before insert, before delete) {
             boardUserTriggerHandler.beforeInsert(Trigger.new);
         } else if (Trigger.isDelete) {
             boardUserTriggerHandler.beforeDelete(Trigger.old);
+
+        } else if (Trigger.update) {
+            boardUserTriggerHandler.beforeInsert(Trigger.new);
         }
+
     }
 }

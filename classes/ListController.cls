@@ -10,8 +10,13 @@ public with sharing class ListController {
         try {
             List<Id> cListIds = new List<Id>();
             cListIds.add(cListId);
+            if (true) {
+                return ;
+            }
             return listService.getCardsOnLists(cListIds).get(cListId);
         } catch (Exception e) {
+            System.debug('RRR ' + e);
+            throw new AuraHandledException(e.getMessage());
             throw new AuraHandledException(e.getMessage());
         }
     }

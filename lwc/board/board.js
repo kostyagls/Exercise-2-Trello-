@@ -40,6 +40,7 @@ export default class Board extends LightningElement {
     }
 
     handleLoadBoardEvent(board) {
+        console.log(board);
         this.board = board;
         getListsByBoardId({boardId: this.board.Id})
             .then(result => {
@@ -55,7 +56,12 @@ export default class Board extends LightningElement {
     }
 
     handleClickOnNewList() {
+        //test comment
         this.isModalOpen = true;
+    }
+
+    handleClickCloseModel() {
+        this.isModalOpen = false;
     }
 
     handleClickCloseModel() {
@@ -67,7 +73,7 @@ export default class Board extends LightningElement {
     }
 
     handleSave() {
-        saveNewList({name: this.listName, boardId: this.board.Id})
+        save New List({name: this.listName, boardId: this.board.Id})
             .then(result => {
                     const title = 'List is created';
                     const variant = 'success';
@@ -106,7 +112,7 @@ export default class Board extends LightningElement {
     }
 
     setNewBoardName(name) {
-        changeBoardName({boardId: this.board.Id, newName: name})
+        changeBoardName(boardId: this.board.Id, newName: name)
             .then(result => {
             })
             .catch(error => {
