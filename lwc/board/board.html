@@ -24,6 +24,13 @@
                                     oncarddrag={handleListItemDrag}
                                     oncarddrop={handleCardDrop}>
                             </c-list>
+                            <c-list list={list}
+                                    board={board}
+                                    oncardchanged={handleUpdateCards}
+                                    onlistdeleted={handleUpdateLists}
+                                    oncarddrag={handleListItemDrag}
+                                    oncarddrop={handleCardDrop}>
+                            </c-list>
                         </lightning-layout-item>
                     </template>
                 </template>
@@ -37,7 +44,7 @@
         </div>
     </template>
 
-    <template if:true={isModalOpen}>
+    <template if:true={isModalOpen} style="text-align: center">
         <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
                  aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
             <div class="slds-modal__container">
@@ -67,7 +74,10 @@
         <div class="slds-backdrop slds-backdrop_open"></div>
     </template>
 
-
+    test html
+    <br>
+    <br>
+    <br>
     <template if:true={isDeleteBoardModalOpen}>
         <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open slds-modal_small"
                  aria-labelledby="modal-heading-01" aria-modal="true" aria-describedby="modal-content-id-1">
