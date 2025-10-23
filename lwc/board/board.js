@@ -13,8 +13,6 @@ import getUsers from '@salesforce/apex/BoardController.getUsers';
 import addMember from '@salesforce/apex/BoardController.addMember';
 import deleteMember from '@salesforce/apex/BoardController.deleteMember';
 
-
-
 export default class Board extends LightningElement {
 
     @wire(CurrentPageReference) pageRef;
@@ -34,6 +32,10 @@ export default class Board extends LightningElement {
         registerListener('loadboard', this.handleLoadBoardEvent, this);
     }
 
+    connectedCallback() {
+        // subscribe to loadBoard event
+        registerListener('loadboard', this.handleLoadBoardEvent, this);
+    }
     disconnectedCallback() {
         // unsubscribe from bearListUpdate event
         unregisterAllListeners(this);

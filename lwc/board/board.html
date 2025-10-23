@@ -12,7 +12,7 @@
         </lightning-button-menu>
 
         <div class="slds-card__body_inner">
-
+            //sadasdsadad
             <lightning-layout multiple-rows="true" pull-to-boundary="small">
                 <template if:true={lists}>
                     <template for:each={lists} for:item="list">
@@ -27,6 +27,11 @@
                         </lightning-layout-item>
                     </template>
                 </template>
+                <lightning-button label="Add new list"
+                                  icon-name="utility:add"
+                                  class="slds-p-around_x-small"
+                                  onclick={handleClickOnNewList}>
+                </lightning-button>
                 <lightning-button label="Add new list"
                                   icon-name="utility:add"
                                   class="slds-p-around_x-small"
@@ -48,6 +53,12 @@
                     <div class="slds-m-top_medium slds-m-bottom_x-large">
 
                         <div class="slds-p-around_medium lgc-bg">
+                            <lightning-input type="text"
+                                             onchange={handleInputName}
+                                             label="Name:"
+                                             placeholder="type here..."
+                                             required>
+                            </lightning-input>
                             <lightning-input type="text"
                                              onchange={handleInputName}
                                              label="Name:"
