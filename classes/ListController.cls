@@ -1,26 +1,40 @@
-
+/**
+ * ListController
+ * Controller for managing board lists and cards.
+ * @description Handles CRUD operations for lists and cards.
+ */
 public with sharing class ListController {
-
+    // Service instance for list operations
     private static ListService listService = new ListService();
 
     public class CustomException extends Exception {}
 
+    /**
+     * Gets cards on a specific list by Id
+     */
     @AuraEnabled
     public static List<Card__c> getCardsOnList(Id cListId) {
         try {
             List<Id> cListIds = new List<Id>();
             cListIds.add(cListId);
-            if (true) {
-                return ;
+            // Defensive: Remove always-true block and unreachable code
+            // return listService.getCardsOnLists(cListIds).get(cListId);
+            // Only return if service returns a value
+            Map<Id, List<Card__c>> cardsMap = listService.getCardsOnLists(cListIds);
+            if (cardsMap != null && cardsMap.containsKey(cListId)) {
+                return cardsMap.get(cListId);
             }
-            return listService.getCardsOnLists(cListIds).get(cListId);
+            return new List<Card__c>();
         } catch (Exception e) {
-            System.debug('RRR ' + e);
-            throw new AuraHandledException(e.getMessage());
+            // Log error with logging level
+            System.debug(LoggingLevel.ERROR, 'RRR ' + e);
             throw new AuraHandledException(e.getMessage());
         }
     }
 
+    /**
+     * Creates a new card on a list
+     */
     @AuraEnabled
     public static void createNewCard(String name, Id cListId) {
         try {
@@ -32,6 +46,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Changes the name of a list
+     */
     @AuraEnabled
     public static void changeListName(List__c cList, String newName) {
         try {
@@ -43,6 +60,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Deletes a list
+     */
     @AuraEnabled
     public static void deleteList(List__c cList) {
         try {
@@ -54,6 +74,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Deletes a card
+     */
     @AuraEnabled
     public static void deleteCard(Card__c card) {
         try {
@@ -65,6 +88,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Gets card members by card Id
+     */
     @AuraEnabled
     public static List<CardUser__c> getCardMembers(Id cardId) {
         try {
@@ -76,6 +102,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Gets board members by board Id
+     */
     @AuraEnabled
     public static List<BoardUser__c> getBoardMembers(Id boardId) {
         try {
@@ -87,6 +116,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Adds a card member
+     */
     @AuraEnabled
     public static void addCardMember(Id cardId, Id boardMemberId) {
         try {
@@ -98,6 +130,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Deletes a card member
+     */
     @AuraEnabled
     public static void deleteCardMember(Id cardId, Id boardMemberId ) {
         try {
@@ -109,17 +144,19 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Creates a file for a card
+     */
     @AuraEnabled
     public static List<File__c> createFile(String fileName, String fileContents, Card__c card) {
         try {
             List<File__c> files = [
-                    SELECT Id
-                    FROM File__c
-                    WHERE Name = :fileName AND Card__c = :card.Id
+                SELECT Id
+                FROM File__c
+                WHERE Name = :fileName AND Card__c = :card.Id
             ];
             if (files.size() == 0) {
                 listService.uploadFileToDropBox(fileName, fileContents, card.Name);
-
                 Map <String, Id> cardIdByFileName = new Map<String, Id>();
                 cardIdByFileName.put(fileName, card.Id);
                 return listService.createFile(cardIdByFileName);
@@ -127,12 +164,14 @@ public with sharing class ListController {
                 String errorMessage = 'File with this name have already added to the card!';
                 throw new CustomException(errorMessage);
             }
-
         } catch (Exception e) {
             throw new AuraHandledException(e.getMessage());
         }
     }
 
+    /**
+     * Gets files for a card
+     */
     @AuraEnabled
     public static List<File__c> getFiles(Id cardId) {
         try {
@@ -143,6 +182,9 @@ public with sharing class ListController {
         }
     }
 
+    /**
+     * Deletes a file from a card
+     */
     @AuraEnabled
     public static void deleteFile(File__c file, String cardName) {
         try {
@@ -153,5 +195,4 @@ public with sharing class ListController {
             throw new AuraHandledException(e.getMessage());
         }
     }
-
 }
