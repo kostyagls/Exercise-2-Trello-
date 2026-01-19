@@ -15,6 +15,9 @@ public with sharing class ListController {
     // Service layer for List operations
     private static ListService listService = new ListService();
 
+    /**
+     * Custom exception for ListController
+     */
     public class CustomException extends Exception {}
 
     /**
