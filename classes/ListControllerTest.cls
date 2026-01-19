@@ -53,9 +53,12 @@ private class ListControllerTest {
 
     @isTest
     static void testCreateNewCard_Positive() {
+        // Start test context to ensure governor limits are reset
         Test.startTest();
+        // Execute the method under test - create a new card on the test list
         ListController.createNewCard('New Card', getTestListId());
         Test.stopTest();
+        // Verify that the card was created successfully
         List<Card__c> cards = [SELECT Id FROM Card__c WHERE Name = 'New Card'];
         System.assertEquals(1, cards.size(), 'Should create a new card');
     }
