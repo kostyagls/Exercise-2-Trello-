@@ -46,7 +46,7 @@ private class ListControllerTest {
     }
 
     @isTest
-    static void testGetCardsOnList_Positive() {
+    static void testGetCardsOnList_PositiveMeth() {
         List<Card__c> cards = ListController.getCardsOnList(getTestListId());
         System.assert(cards != null, 'Should return cards');
     }
